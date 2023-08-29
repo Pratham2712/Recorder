@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,7 +12,10 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Login from "../pages/Login";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutThunk } from "../redux/slices/UserInfoSlice";
+import {
+  checkUserLoginThunk,
+  logoutThunk,
+} from "../redux/slices/UserInfoSlice";
 
 const Navbar = () => {
   const pages = ["Products", "Pricing", "Blog"];
@@ -36,7 +39,9 @@ const Navbar = () => {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
+  useEffect(() => {
+    dispatch(checkUserLoginThunk());
+  }, []);
   return (
     <AppBar position="static">
       <Container maxWidth="xl">

@@ -1,6 +1,6 @@
 import React from "react";
 import Webcam from "react-webcam";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { Alert, Box, Button, Dialog, Snackbar } from "@mui/material";
 import { useSelector } from "react-redux";
 
@@ -20,7 +20,7 @@ const Home = () => {
   const isLogin = useSelector(
     (state) => state.rootReducer.UserInfoSlice.isLogin
   );
-
+  console.log(isLogin);
   const handleClose = () => {
     setPlay(false);
   };
@@ -32,26 +32,24 @@ const Home = () => {
   };
 
   const handleStartCaptureClick = React.useCallback(async () => {
-    if (isLogin) {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      webcamRef.current.stream = stream;
-      if (webcamRef.current.stream) {
-        setCapturing(true);
-        localStorage.clear();
+    console.log(isLogin);
 
-        mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-          mimeType: "video/webm",
-        });
-        mediaRecorderRef.current.addEventListener(
-          "dataavailable",
-          handleDataAvailable
-        );
-        mediaRecorderRef.current.start();
-      } else {
-        alert("camera permission denied");
-      }
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    webcamRef.current.stream = stream;
+    if (webcamRef.current.stream) {
+      setCapturing(true);
+      localStorage.clear();
+
+      mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+        mimeType: "video/webm",
+      });
+      mediaRecorderRef.current.addEventListener(
+        "dataavailable",
+        handleDataAvailable
+      );
+      mediaRecorderRef.current.start();
     } else {
-      setLoginError(true);
+      alert("camera permission denied");
     }
   }, [webcamRef, setCapturing, mediaRecorderRef]);
 
@@ -133,7 +131,12 @@ const Home = () => {
             Stop Capture
           </Button>
         ) : (
-          <Button variant="outlined" onClick={handleStartCaptureClick}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              isLogin ? handleStartCaptureClick() : setLoginError(true);
+            }}
+          >
             Start Capture
           </Button>
         )}
