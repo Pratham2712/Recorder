@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Webcam from "react-webcam";
 import { useState, useRef, useCallback } from "react";
-import { Box, Button, Dialog } from "@mui/material";
+import { Alert, Box, Button, Dialog, Snackbar } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const webcamRef = useRef(null);
@@ -10,6 +11,15 @@ const Home = () => {
   const [recordedChunks, setRecordedChunks] = useState({});
   const [videoBlob, setVideoBlob] = useState(null);
   const [play, setPlay] = useState(false);
+  const [loginError, setLoginError] = useState(false);
+  const [state, setState] = useState({
+    vertical: "top",
+    horizontal: "center",
+  });
+  const { vertical, horizontal } = state;
+  const isLogin = useSelector(
+    (state) => state.rootReducer.UserInfoSlice.isLogin
+  );
 
   const handleClose = () => {
     setPlay(false);
@@ -22,22 +32,26 @@ const Home = () => {
   };
 
   const handleStartCaptureClick = React.useCallback(async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    webcamRef.current.stream = stream;
-    if (webcamRef.current.stream) {
-      setCapturing(true);
-      localStorage.clear();
+    if (isLogin) {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      webcamRef.current.stream = stream;
+      if (webcamRef.current.stream) {
+        setCapturing(true);
+        localStorage.clear();
 
-      mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-        mimeType: "video/webm",
-      });
-      mediaRecorderRef.current.addEventListener(
-        "dataavailable",
-        handleDataAvailable
-      );
-      mediaRecorderRef.current.start();
+        mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+          mimeType: "video/webm",
+        });
+        mediaRecorderRef.current.addEventListener(
+          "dataavailable",
+          handleDataAvailable
+        );
+        mediaRecorderRef.current.start();
+      } else {
+        alert("camera permission denied");
+      }
     } else {
-      alert("camera permission denied");
+      setLoginError(true);
     }
   }, [webcamRef, setCapturing, mediaRecorderRef]);
 
@@ -82,6 +96,23 @@ const Home = () => {
 
   return (
     <div className="container">
+      <Snackbar
+        open={loginError}
+        anchorOrigin={{ vertical, horizontal }}
+        autoHideDuration={2000}
+        onClose={() => {
+          setLoginError(false);
+        }}
+      >
+        <Alert
+          severity="error"
+          variant="filled"
+          onClose={() => setLoginError(false)}
+          sx={{ width: "100%" }}
+        >
+          Please Login
+        </Alert>
+      </Snackbar>
       <Webcam
         audio={true}
         ref={webcamRef}

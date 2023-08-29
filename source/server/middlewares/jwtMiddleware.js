@@ -7,7 +7,7 @@ export const verifyToken = async (req, res, next) => {
     if (req.cookies["USER_TOKEN"]) {
       const decryptedToken = await jwt.verify(
         req.cookies["USER_TOKEN"],
-        process.env.JWT_SECRET
+        "secret"
       );
       const user = await getUser(decryptedToken._id);
       if (user) {

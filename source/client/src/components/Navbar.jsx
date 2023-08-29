@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -7,32 +7,36 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import Login from "../pages/Login";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutThunk } from "../redux/slices/UserInfoSlice";
+
 const Navbar = () => {
   const pages = ["Products", "Pricing", "Blog"];
-  const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const isLogin = useSelector(
+    (state) => state.rootReducer.UserInfoSlice.isLogin
+  );
+
+  const userName = useSelector(
+    (state) => state.rootReducer.UserInfoSlice.data.userInfo.username
+  );
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -113,14 +117,20 @@ const Navbar = () => {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Button
-              onClick={handleCloseNavMenu}
+              onClick={() => {
+                if (!isLogin) {
+                  setLoginOpen(!loginOpen);
+                }
+              }}
               sx={{ my: 2, color: "white", display: "block" }}
             >
-              Login/signup
+              {isLogin ? userName : "Login/Signup"}
             </Button>
             <Button
-              onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
+              onClick={() => {
+                dispatch(logoutThunk());
+              }}
             >
               Logout
             </Button>
@@ -158,6 +168,7 @@ const Navbar = () => {
           </Box> */}
         </Toolbar>
       </Container>
+      <Login loginOpen={loginOpen} setLoginOpen={setLoginOpen} />
     </AppBar>
   );
 };
