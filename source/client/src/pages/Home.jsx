@@ -20,7 +20,7 @@ const Home = () => {
   const isLogin = useSelector(
     (state) => state.rootReducer.UserInfoSlice.isLogin
   );
-  console.log(isLogin);
+
   const handleClose = () => {
     setPlay(false);
   };
@@ -32,16 +32,14 @@ const Home = () => {
   };
 
   const handleStartCaptureClick = React.useCallback(async () => {
-    console.log(isLogin);
-
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     webcamRef.current.stream = stream;
     if (webcamRef.current.stream) {
       setCapturing(true);
-      localStorage.clear();
+      //localStorage.clear();
 
       mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-        mimeType: "video/webm",
+        mimeType: "video/webm; codecs=vp9",
       });
       mediaRecorderRef.current.addEventListener(
         "dataavailable",
@@ -85,7 +83,7 @@ const Home = () => {
       }
 
       const blob = new Blob([new Uint8Array(byteArrays)], {
-        type: "video/webm",
+        type: "video/webm; codecs=vp9",
       });
 
       setVideoBlob(blob);
@@ -119,7 +117,7 @@ const Home = () => {
       <Box
         sx={{
           display: "flex",
-          marginTop: "2rem",
+          marginTop: "1rem",
         }}
       >
         {capturing ? (

@@ -8,7 +8,6 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Login from "../pages/Login";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,8 +17,6 @@ import {
 } from "../redux/slices/UserInfoSlice";
 
 const Navbar = () => {
-  const pages = ["Products", "Pricing", "Blog"];
-
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const dispatch = useDispatch();
@@ -94,11 +91,26 @@ const Navbar = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <Button
+                onClick={() => {
+                  if (!isLogin) {
+                    setLoginOpen(!loginOpen);
+                  }
+                  handleCloseNavMenu();
+                }}
+                sx={{ my: 2, color: "black", display: "block" }}
+              >
+                {isLogin ? userName : "Login/Signup"}
+              </Button>
+              <Button
+                sx={{ my: 2, color: "black", display: "block" }}
+                onClick={() => {
+                  dispatch(logoutThunk());
+                  handleCloseNavMenu();
+                }}
+              >
+                Logout
+              </Button>
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />

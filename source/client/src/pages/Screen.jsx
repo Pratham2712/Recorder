@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Screen = () => {
   const [recordingNumber, setRecordingNumber] = useState(0);
-  const dispatch = useDispatch();
   const isLogin = useSelector(
     (state) => state.rootReducer.UserInfoSlice.isLogin
   );
@@ -19,7 +18,6 @@ const Screen = () => {
   } = useReactMediaRecorder({ screen: true });
 
   const startRecording = () => {
-    console.log("screen", isLogin);
     if (isLogin) {
       return startRecord();
     }
@@ -34,6 +32,7 @@ const Screen = () => {
   };
 
   const viewRecording = () => {
+    console.log(mediaBlobUrl);
     window.open(mediaBlobUrl, "_blank").focus();
   };
 
@@ -43,7 +42,7 @@ const Screen = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "2rem",
+        marginTop: "1rem",
       }}
     >
       {status && status !== "recording" && (
